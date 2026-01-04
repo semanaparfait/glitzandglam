@@ -49,7 +49,7 @@ export default function Navbar() {
         </ul>
 
         <div className="flex gap-3 mr-5">
-            <button className="border py-0.5 px-2">Sign Up</button>
+            <Link href='/account' className="border py-0.5 px-2">Sign Up</Link>
             <ShoppingCart/>
 
         </div>
