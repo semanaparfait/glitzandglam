@@ -9,6 +9,7 @@ export interface Product {
   onSale:boolean,
   outOfStock:boolean,
   description: string;
+  category: string;
 }
 
 export const products: Product[] = [
@@ -21,6 +22,7 @@ export const products: Product[] = [
     oldPrice:7000,
     image: "/products/p11.png",
     description: "High-quality wireless headphones with noise-canceling feature.",
+    category: "Wireless Headphones",
   },
   {
     id: 2,
@@ -31,6 +33,7 @@ export const products: Product[] = [
     oldPrice:10000,
     image: "/products/p22.png",
     description: "Track your fitness and notifications on the go.",
+    category: "Smart Watch",
   },
   {
     id: 3,
@@ -41,6 +44,7 @@ export const products: Product[] = [
     onSale:true,
     image: "/products/p3.png",
     description: "Precision gaming mouse with customizable DPI and RGB lights.",
+    category: "Gaming Mouse",
   },
   {
     id: 4,
@@ -51,6 +55,7 @@ export const products: Product[] = [
     oldPrice:7000,
     image: "https://i.pinimg.com/1200x/1a/3f/5b/1a3f5bedabd0022860e3ba9b3bf90b05.jpg",
     description: "Durable mechanical keyboard with tactile feedback.",
+    category: "Mechanical Keyboard",
   },
   {
     id: 5,
@@ -61,6 +66,7 @@ export const products: Product[] = [
     oldPrice:5000,
     image: "https://i.pinimg.com/736x/74/f1/3b/74f13b8705ddf22f9dee9848004491d4.jpg",
     description: "Portable speaker with rich sound and long battery life.",
+    category: "Bluetooth Speaker",
   },
   {
     id: 6,
@@ -71,6 +77,7 @@ export const products: Product[] = [
     onSale:false,
     image: "https://i.pinimg.com/736x/e4/00/87/e40087a406d7a68100cb42cbd0c4fe07.jpg",
     description: "Ergonomic laptop stand to improve posture and cooling.",
+    category: "Laptop Stand",
   },
   {
     id: 7,
@@ -81,6 +88,7 @@ export const products: Product[] = [
     outOfStock:false,
     image: "/products/hard-drive.jpg",
     description: "1TB external hard drive for all your storage needs.",
+    category: "External Hard Drive",
   },
   {
     id: 8,
@@ -91,6 +99,7 @@ export const products: Product[] = [
     outOfStock:false,
     image: "https://i.pinimg.com/1200x/69/5f/b8/695fb85839f60ca27ec8d915896a98d6.jpg",
     description: "Fast wireless charger compatible with most smartphones.",
+    category: "Accessories",
   },
   {
     id: 9,
@@ -101,6 +110,7 @@ export const products: Product[] = [
     outOfStock:false,
     image: "/products/action-camera.jpg",
     description: "Capture your adventures in 4K with this waterproof action camera.",
+    category: "Cameras",
   },
   {
     id: 10,
@@ -111,5 +121,6 @@ export const products: Product[] = [
     outOfStock:false,
     image: "/products/vr-headset.jpg",
     description: "Immersive VR headset for gaming and virtual experiences.",
+    category: "Gaming",
   },
 ];

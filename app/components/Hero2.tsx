@@ -20,7 +20,7 @@ export default function Hero2() {
   const activeProduct = products[activeIndex];
 
   return (
-    <section className="min-h-screen bg-white md:px-10 px-5 py-20 flex items-center justify-center overflow-hidden">
+    <section className="min-h-screen bg-white md:px-10 px-5 md:py-20 flex items-center justify-center overflow-hidden">
       <div className="container mx-auto grid md:grid-cols-12 gap-8 items-center">
         
         {/* Left Column: Text Content */}
@@ -55,7 +55,7 @@ export default function Hero2() {
             key={activeProduct.id}
             src={activeProduct.image} 
             alt={activeProduct.name} 
-            style={{ WebkitBoxReflect: "below 5px linear-gradient(transparent, rgba(0,0,0,0.3))" }}
+            style={{ WebkitBoxReflect: "below 2px linear-gradient(transparent, rgba(0,0,0,0.3))" }}
             className="w-full md:max-w-[450px] max-w-[250px] object-contain drop-shadow-2xl animate-slideUp"
           />
         </div>
