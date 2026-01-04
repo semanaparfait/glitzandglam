@@ -17,7 +17,7 @@ export default function Navbar() {
     { linkName: "Home", path: "/" },
     { linkName: "Shop", path: "/shop" },
     { linkName: "About us", path: "/about" },
-    { linkName: "Contact us", path: "/contact" },
+    { linkName: "Contact us", path: "/contactus" },
     // { linkName: "Cart", path: "/cart" },
     // { linkName: "Login", path: "/login" },
   ];
@@ -26,7 +26,7 @@ export default function Navbar() {
 
   return (
     <header className="bg-white shadow sticky top-0 z-50">
-      <nav className="container mx-auto flex items-center justify-center md:gap-56 p-4">
+      <nav className="container mx-auto flex items-center md:justify-center justify-between md:gap-56 p-4">
         {/* Logo */}
         <Link href="/">
         <img src="/logo.png" alt="logo" width={90}/>
@@ -49,7 +49,7 @@ export default function Navbar() {
         </ul>
 
         <div className="flex gap-3 mr-5">
-            <User/>
+            <button className="border py-0.5 px-2">Sign Up</button>
             <ShoppingCart/>
 
         </div>
