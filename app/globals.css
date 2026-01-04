@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap');
+@import "tailwindcss";
+
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+  --sub-text: gray;
+  --titles-font: 'Great Vibes', cursive;
+}
+
+body {
+  background: var(--background);
+
+}
+.Hero-images{
+  -webkit-box-reflect: below;
+}
