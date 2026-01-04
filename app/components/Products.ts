@@ -69,7 +69,7 @@ export const products: Product[] = [
     oldPrice:3000,
     outOfStock:true,
     onSale:false,
-    image: "/products/laptop-stand.jpg",
+    image: "https://i.pinimg.com/736x/e4/00/87/e40087a406d7a68100cb42cbd0c4fe07.jpg",
     description: "Ergonomic laptop stand to improve posture and cooling.",
   },
   {
@@ -89,7 +89,7 @@ export const products: Product[] = [
     oldPrice:2500,
     onSale:true,
     outOfStock:false,
-    image: "/products/wireless-charger.jpg",
+    image: "https://i.pinimg.com/1200x/69/5f/b8/695fb85839f60ca27ec8d915896a98d6.jpg",
     description: "Fast wireless charger compatible with most smartphones.",
   },
   {
