@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { categories } from "./CategoriesData";
 
 export default function Categories() {
@@ -40,8 +41,10 @@ export default function Categories() {
                 >
                   {cat.name}
                 </h1>
-
-                <button className="border border-black text-xs uppercase font-bold mt-2 hover:text-gray-600 py-1.5 px-2">
+                <Link href='/shop' className="border border-black text-xs uppercase font-bold mt-2 hover:text-gray-600 py-1.5 px-2">
+                shop now
+                </Link>
+                <button className="border border-black text-xs uppercase font-bold mt-2 hover:text-gray-600 py-1.5 px-2 hidden">
                   Shop Now
                 </button>
               </div>

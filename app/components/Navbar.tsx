@@ -1,8 +1,10 @@
 "use client"
-import { ShoppingBag, ShoppingCart, User } from "lucide-react";
+import { List, ShoppingBag, ShoppingCart, User, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
+
 
 
 interface NavLink {
@@ -11,6 +13,7 @@ interface NavLink {
 }
 
 export default function Navbar() {
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
   const links: NavLink[] = [
@@ -42,8 +45,17 @@ export default function Navbar() {
         {/* Desktop Links */}
         <ul className="hidden md:flex space-x-6">
           {links.map((link) => (
-            <li key={link.linkName} className="capitalize hover:text-green-500">
-              <Link href={link.path}>{link.linkName}</Link>
+            <li key={link.linkName} className="capitalize">
+              <Link
+                href={link.path}
+                className={`transition-colors ${
+                  pathname === link.path
+                    ? "text-[var(--hover-nav)] font-semibold border-b-2 border-[var(--hover-nav)]"
+                    : " hover:[var(--hover-nav)]"
+                }`}
+              >
+                {link.linkName}
+              </Link>
             </li>
           ))}
         </ul>
@@ -59,7 +71,7 @@ export default function Navbar() {
           className="md:hidden text-gray-700 text-2xl"
           onClick={toggleMenu}
         >
-          {menuOpen ? "✖" : "☰"}
+          {menuOpen ? <X/> : <List/>}
         </button>
       </nav>
 
@@ -67,8 +79,18 @@ export default function Navbar() {
       {menuOpen && (
         <ul className="md:hidden bg-white shadow-md flex flex-col items-center space-y-4 p-4">
           {links.map((link) => (
-            <li key={link.linkName} className="capitalize hover:text-green-500">
-              <Link href={link.path}>{link.linkName}</Link>
+            <li key={link.linkName} className="capitalize w-full text-center">
+              <Link
+                href={link.path}
+                className={`block py-2 px-4 rounded-lg transition-colors ${
+                  pathname === link.path
+                    ? "bg-amber-100 text-amber-600 font-semibold"
+                    : "text-gray-700 hover:bg-gray-100 hover:text-amber-500"
+                }`}
+                onClick={() => setMenuOpen(false)}
+              >
+                {link.linkName}
+              </Link>
             </li>
           ))}
         </ul>

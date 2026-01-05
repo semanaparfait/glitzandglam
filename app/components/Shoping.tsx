@@ -1,3 +1,4 @@
+import Link from "next/link"
 import { products } from "./Products"
 
 export default function Shoping(){
@@ -19,6 +20,7 @@ export default function Shoping(){
             </div>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-10">
     {products.slice(0, 6).map((product) => (
+        <Link href='/shop'>
         <div key={product.id} className="group flex flex-col items-center relative">
         
         {/* Container for Image and Badges */}
@@ -67,11 +69,15 @@ export default function Shoping(){
             </div>
         </div>
         </div>
+        </Link>
     ))}
     </div>
     <div className="mt-5">
+        <Link href='/shop' className="border-2 py-1.5 p-2 ">
+        SHOP MORE
+        </Link>
 
-    <button className="border-2 py-1.5 p-2 ">SHOP MORE</button>
+    {/* <button >SHOP MORE</button> */}
     </div>
         </div>
     )
