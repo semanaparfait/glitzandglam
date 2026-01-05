@@ -20,8 +20,8 @@ export default function Shoping(){
             </div>
     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-10">
     {products.slice(0, 6).map((product) => (
-        <Link href='/shop'>
-        <div key={product.id} className="group flex flex-col items-center relative">
+        <Link href='/shop' key={product.id} className="group flex flex-col items-center relative">
+        {/* <div key={product.id} className="group flex flex-col items-center relative"> */}
         
         {/* Container for Image and Badges */}
         <div className="relative bg-[#f7eff0] w-[17rem] h-[22rem]  flex items-center justify-center overflow-hidden ">
@@ -68,7 +68,7 @@ export default function Shoping(){
             </span>
             </div>
         </div>
-        </div>
+        {/* </div> */}
         </Link>
     ))}
     </div>
