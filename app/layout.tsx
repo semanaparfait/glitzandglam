@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "./components/Navbar";
-import Footer from "./components/Footer";
+import Navbar from "./(user)/components/Navbar";
+import Footer from "./(user)/components/Footer";
 
 
 
@@ -22,9 +21,9 @@ export default function RootLayout({
         <link rel="icon" href="/logo.jpg" />
       </head>
       <body>
-        <Navbar/>
+        {/* <Navbar/> */}
         {children}
-        <Footer/>
+        {/* <Footer/> */}
       </body>
     </html>
   );

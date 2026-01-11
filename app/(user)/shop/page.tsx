@@ -57,7 +57,7 @@ export default function Shop(){
                     )}
 
                     <img 
-                    src={product.image} 
+                    src={product.image instanceof Array ? product.image[0] : product.image} 
                     alt={product.name} 
                     className=" object-contain group-hover:scale-110 transition-transform duration-500"
                     />

@@ -53,7 +53,7 @@ export default function Hero2() {
           {/* Added a key to the image to trigger a re-animation when the product changes */}
           <img 
             key={activeProduct.id}
-            src={activeProduct.image} 
+            src={activeProduct.image instanceof Array ? activeProduct.image[0] : activeProduct.image} 
             alt={activeProduct.name} 
             style={{ WebkitBoxReflect: "below 2px linear-gradient(transparent, rgba(0,0,0,0.3))" }}
             className="w-full md:max-w-[450px] max-w-[250px] object-contain drop-shadow-2xl animate-slideUp"
@@ -74,7 +74,7 @@ export default function Hero2() {
                 : 'border-gray-100 bg-gray-50 opacity-50 hover:opacity-100'
               }`}
             >
-              <img src={product.image} alt={product.name} className="w-12 h-12 object-contain" />
+              <img src={product.image instanceof Array ? product.image[0] : product.image} alt={product.name} className="w-12 h-12 object-contain" />
               {/* <p className="text-[10px] uppercase mt-2 font-bold text-gray-600">{product.category || 'Jewelry'}</p> */}
             </button>
           ))}

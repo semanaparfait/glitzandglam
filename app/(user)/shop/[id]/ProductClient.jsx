@@ -4,16 +4,34 @@ import { useState } from "react";
 
 export default function ProductClient({ product }) {
     const [count, setCount] = useState(1);
+    const images = Array.isArray(product.image) ? product.image.slice(0, 5) : [product.image];
+    const [activeIndex, setActiveIndex] = useState(0);
 
   return (
     <div className="grid md:grid-cols-2 justify-center gap-3 py-10 px-5  ">
-        <div className="  flex items-center justify-center rounded-xl  ">
-        <img
-            src={product.image}
-            alt={product.name}
-            className="w-1/2 h-auto object-contain"
-        />
-        </div>
+                <div className="flex flex-col items-center justify-center rounded-xl">
+                    <div className="w-full flex items-center justify-center">
+                        <img
+                            src={images[activeIndex]}
+                            alt={product.name}
+                            className="w-1/2 h-auto object-contain"
+                        />
+                    </div>
+                    {images.length > 1 && (
+                        <div className="flex gap-2 mt-4 flex-wrap justify-center">
+                            {images.map((src, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => setActiveIndex(i)}
+                                    className={`rounded-md p-0.5 border ${i === activeIndex ? "border-black" : "border-transparent"}`}
+                                    aria-label={`View image ${i + 1}`}
+                                >
+                                    <img src={src} alt={`${product.name} ${i + 1}`} className="h-16 w-16 object-cover rounded" />
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
 
         <div className="flex flex-col gap-2 items-start ">
 
