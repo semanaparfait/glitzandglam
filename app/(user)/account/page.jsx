@@ -1,17 +1,19 @@
 "use client"
 import { useState } from "react";
+import {toast} from "react-hot-toast";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Mail, Lock, User, Phone, Sparkles } from "lucide-react";
 
-export default function Account() {
+export default  function Account() {
     const [isLogin, setIsLogin] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [formData, setFormData] = useState({
         email: "",
         password: "",
-        confirmPassword: "",
         fullName:"",
-        phone: ""
+        phonenumber: ""
     });
 
     const handleInputChange = (e) => {
@@ -27,14 +29,51 @@ export default function Account() {
             // Handle login
             console.log("Login:", { email: formData.email, password: formData.password });
         } else {
-            // Handle signup
-            if (formData.password !== formData.confirmPassword) {
-                alert("Passwords don't match!");
-                return;
-            }
-            console.log("Signup:", formData);
+
+            doSignup();
         }
     };
+
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+
+    const doSignup = async () => {
+        setLoading(true);
+        try {
+            // Map frontend field `fullName` to backend `fullname`
+            // Backend expects `phonenumber`, so map UI `phone` accordingly
+            const payload = {
+                fullname: formData.fullName,
+                email: formData.email,
+                password: formData.password,
+                phonenumber: formData.phonenumber
+            };
+
+            // Update this URL if your backend runs on a different port
+            const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000';
+
+            const res = await axios.post(`${BACKEND}/auth/register`, payload, {
+                headers: { 'Content-Type': 'application/json' }
+            });
+
+            if (res.status === 201) {
+                toast.success('Signup successful! Please log in.');
+                setIsLogin(true);
+                setFormData({ email: '', password: '', confirmPassword: '', fullName: '', phonenumber: '' });
+                // Optionally navigate to login or dashboard
+                router.refresh();
+            } else {
+
+                toast.error(res.data?.message || 'Unexpected response from server');
+            }
+        } catch (err) {
+            console.error('Signup error', err?.response || err);
+            const msg = err?.response?.data?.message || 'Signup failed';
+            toast.error(msg);
+        } finally {
+            setLoading(false);
+        }
+    }
 
     return (
         <div className="min-h-screen  flex items-center justify-center p-4">
@@ -102,9 +141,9 @@ export default function Account() {
                                         <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                                         <input
                                             type="tel"
-                                            name="phone"
+                                            name="phonenumber"
                                             placeholder="Phone Number"
-                                            value={formData.phone}
+                                            value={formData.phonenumber}
                                             onChange={handleInputChange}
                                             className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200"
                                             required={!isLogin}
@@ -148,28 +187,7 @@ export default function Account() {
                                 </button>
                             </div>
 
-                            {!isLogin && (
-                                /* Confirm Password */
-                                <div className="relative">
-                                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                                    <input
-                                        type={showConfirmPassword ? "text" : "password"}
-                                        name="confirmPassword"
-                                        placeholder="Confirm Password"
-                                        value={formData.confirmPassword}
-                                        onChange={handleInputChange}
-                                        className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent transition-all duration-200"
-                                        required={!isLogin}
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-                                    >
-                                        {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                    </button>
-                                </div>
-                            )}
+
 
                             {/* Submit Button */}
                             <button
