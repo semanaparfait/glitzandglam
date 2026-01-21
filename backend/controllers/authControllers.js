@@ -83,6 +83,14 @@ const login = async (req, res) => {
 
 };
 
+const me = async (req, res) => {
+  try {
+    res.status(200).json(req.user);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 const logout = async (req, res) => {
     res.cookie('token', '', {
         httpOnly: true,
@@ -99,4 +107,4 @@ const updateUser = async (req, res) => {
     // Update user logic here
 }
 
-export { register, login, logout, forgotPassword, updateUser };
+export { register, login, logout, forgotPassword, updateUser, me };

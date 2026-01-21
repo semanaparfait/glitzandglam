@@ -3,6 +3,11 @@ import { products } from "./Products";
 import { useState, useEffect } from "react";
 
 export default function Hero2() {
+  const advertProducts=[
+    {id: 1, name:"Ring", image:"/products/p22.png"},
+    {id: 2, name:"Necklace", image:"/products/p3.png"},
+    {id: 3, name:"Necklace", image:"/products/p11.png"}
+  ]
   const [activeIndex, setActiveIndex] = useState(0);
 
   // Auto-play logic: Changes every 3 seconds
@@ -17,7 +22,7 @@ export default function Hero2() {
     return () => clearInterval(interval);
   }, []);
 
-  const activeProduct = products[activeIndex];
+  const activeProduct = advertProducts[activeIndex];
 
   return (
     <section className="min-h-screen bg-white md:px-10 px-5 md:py-20 flex items-center justify-center overflow-hidden">

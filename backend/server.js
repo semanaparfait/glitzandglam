@@ -4,6 +4,10 @@ config();
 import express from 'express';
 import cors from 'cors';
 import authRoutes from './routes/authRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
+import contactUsRoutes from './routes/contactUsRoutes.js';
+import newsLetterRoutes from './routes/NewsLetterRoutes.js';
+import productsRoutes from './routes/productsRoutes.js';
 import { connectDB, disconnectDB } from './config/db.js';
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -19,6 +23,10 @@ app.use(express.urlencoded({extended:true}))
 
 
 app.use('/auth', authRoutes);
+app.use('/category', categoryRoutes);
+app.use('/contactUs', contactUsRoutes);
+app.use('/newsletter', newsLetterRoutes);
+app.use('/products', productsRoutes);
 
 // connect to database
 connectDB();
