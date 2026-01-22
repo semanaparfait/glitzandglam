@@ -27,7 +27,15 @@ const createCategory = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 }
-const getCategories = async (req, res) => {}
+const getCategories = async (req, res) => {
+    try {
+        const categories = await prisma.category.findMany();
+        res.status(200).json({ categories });
+    } catch (error) {
+        console.error("Error fetching categories:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+}
 const getCategoryById = async (req, res) => {}
 const deleteCategory = async (req, res) => {
     const { id } = req.params;

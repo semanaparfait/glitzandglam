@@ -6,7 +6,10 @@ export const  Apislice = createApi({
     baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_BASE_URL }),
     endpoints: (builder) => ({
         getProducts: builder.query({
-            query: () => "products/products",
+            query: () => "/products/products",
+        }),
+        getproductById: builder.query({
+            query: (id: number) => `/products/product/${id}`,
         }),
         createProduct: builder.mutation({
             query: (product) => ({

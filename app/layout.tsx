@@ -3,6 +3,7 @@ import "./globals.css";
 import { Toaster } from "react-hot-toast";
 import Navbar from "./(user)/components/Navbar";
 import Footer from "./(user)/components/Footer";
+import Providers from "./Providers";
 
 export const metadata: Metadata = {
   title: "Glitz & Glam",
@@ -20,6 +21,7 @@ export default function RootLayout({
         <link rel="icon" href="/logo.jpg" />
       </head>
       <body>
+        <Providers>
         {/* <Navbar /> */}
 
         {children}
@@ -44,6 +46,7 @@ export default function RootLayout({
             },
           }}
         />
+        </Providers>
       </body>
     </html>
   );
