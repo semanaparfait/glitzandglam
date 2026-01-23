@@ -4,6 +4,7 @@ import { FormEvent, useState } from "react";
 import { Pencil, Trash } from "lucide-react";
 import {useCreateProductMutation,useGetProductsQuery} from '@/servicesApi/Productslice'
 import {useGetCategoriesQuery} from '@/servicesApi/categorySlice'
+import { products } from "@/app/(user)/components/Products";
 
 type Tab = "view" | "add";
 
@@ -118,7 +119,7 @@ export default function Products() {
 
             {activeTab === "view" && (
                 <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                    {productsData?.map((product: any) => (
+                    {productsData?.products?.map((product: any) => (
                         <article key={product.id} className="group relative rounded-xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-gray-300">
                             <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
                                 <img 

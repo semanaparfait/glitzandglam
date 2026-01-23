@@ -53,6 +53,10 @@ export default  function Account() {
             if (result.user) {
                 localStorage.setItem('user', JSON.stringify(result.user));
             }
+            if (result.user?.role === 'ADMIN') {
+                router.push('/owner');
+                return;
+            }
 
             // Navigate to shop or home
             router.push('/shop');
