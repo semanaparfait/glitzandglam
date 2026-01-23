@@ -3,49 +3,32 @@
 import { FormEvent, useState } from "react";
 import { Pencil, Trash } from "lucide-react";
 import {useCreateCategoryMutation,useGetCategoriesQuery} from '@/servicesApi/categorySlice';
+import toast, { Toast } from "react-hot-toast";
 
 type Tab = "view" | "add";
 
-const demoCategories = [
-    {
-        id: 1,
-        name: "Bracelets",
-        description: "Elegant bracelets for every occasion.",
-        image: "/newproducts/armring.jpeg",
-    },
-    {
-        id: 2,
-        name: "Earrings",
-        description: "Studs, hoops, and statement pieces.",
-        image: "/newproducts/bigearings.jpeg",
-    },
-    {
-        id: 3,
-        name: "Necklaces",
-        description: "Minimal to bold necklace styles.",
-        image: "/newproducts/neckless1.jpeg",
-    },
-];
+
 
 export default function Categories() {
-    const { data, error, isLoading } = useGetCategoriesQuery(undefined);
-    // Optional debug
-    console.log('Categories data:', data);
+    const { data, error, isLoading, refetch } = useGetCategoriesQuery(undefined);
+    const [createCategory, { isLoading: isCreating }] = useCreateCategoryMutation();
+    
     const [activeTab, setActiveTab] = useState<Tab>("view");
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
-    const [imageType, setImageType] = useState<"file" | "url">("file");
+    const [imageType, setImageType] = useState<"file" | "url">("url");
     const [imageFile, setImageFile] = useState<File | null>(null);
-    const [imageUrl, setImageUrl] = useState("");
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
+    const [formData, setFormData] = useState({
+        categoryName: "",
+        categoryDescription: "",
+        categoryImageUrl: "",
+    })
 
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setMessage(null);
 
-        if (!name.trim()) {
-            setMessage("Name is required.");
+        if (!formData.categoryName.trim()) {
+            setMessage("Category name is required.");
             return;
         }
 
@@ -54,32 +37,40 @@ export default function Categories() {
             return;
         }
 
-        if (imageType === "url" && !imageUrl.trim()) {
+        if (imageType === "url" && !formData.categoryImageUrl.trim()) {
             setMessage("Please provide an image URL.");
             return;
         }
 
         try {
-            setIsSubmitting(true);
-            // TODO: Replace with real API call to your backend (e.g., POST /api/categories)
-            // Example payload:
-            // const formData = new FormData();
-            // formData.append("name", name);
-            // formData.append("description", description);
-            // if (imageType === "file" && imageFile) formData.append("image", imageFile);
-            // if (imageType === "url") formData.append("imageUrl", imageUrl);
-            // await fetch("/api/categories", { method: "POST", body: formData });
-            await new Promise((resolve) => setTimeout(resolve, 500));
+            let imageUrl = formData.categoryImageUrl;
+            if (imageType === "file" && imageFile) {
+                imageUrl = URL.createObjectURL(imageFile);
+            }
 
-            setMessage("Category saved (mock).");
-            setName("");
-            setDescription("");
+            const categoryData = {
+                categoryName: formData.categoryName,
+                categoryDescription: formData.categoryDescription,
+                categoryImageUrl: imageUrl,
+            };
+
+            await createCategory(categoryData).unwrap();
+            toast.success("Category created successfully!");
+            
+            setMessage("Category created successfully!");
+            setFormData({
+                categoryName: "",
+                categoryDescription: "",
+                categoryImageUrl: "",
+            });
             setImageFile(null);
-            setImageUrl("");
-        } catch (error) {
-            setMessage("Failed to save category.");
-        } finally {
-            setIsSubmitting(false);
+            refetch();
+            setTimeout(() => {
+                setActiveTab("view");
+                setMessage(null);
+            }, 1500);
+        } catch (error: any) {
+            setMessage(error?.data?.message || "Failed to create category. Please try again.");
         }
     };
    if(isLoading){
@@ -112,18 +103,33 @@ export default function Categories() {
             </div>
 
             {activeTab === "view" && (
-                <section className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {data?.categories?.map((category: any) => (
-                        <article key={category.id} className="rounded-lg border border-gray-200 bg-white shadow-sm overflow-hidden">
-                            <div className="aspect-[4/3] bg-gray-100">
-                                <img src={category.categoryImageUrl} alt={category.categoryName} className="h-full w-full object-cover" />
+                        <article key={category.id} className="group relative rounded-xl overflow-hidden bg-white shadow-md hover:shadow-2xl transition-all duration-300 border border-gray-100 hover:border-gray-300">
+                            <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+                                <img 
+                                    src={category.categoryImageUrl} 
+                                    alt={category.categoryName} 
+                                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110" 
+                                />
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300" />
                             </div>
-                            <div className="p-4 space-y-1">
-                                <h3 className="text-sm font-semibold text-gray-900">{category.categoryName}</h3>
-                                <p className="text-sm text-gray-600">{category.categoryDescription}</p>
-                                <div className="flex gap-3 items-center justify-center">
-                                    <Pencil className="h-5 w-5 text-gray-500 hover:text-gray-700 cursor-pointer" />
-                                    <Trash size={20} className="text-red-500 hover:text-gray-700 cursor-pointer" />
+                            <div className="p-5 space-y-3">
+                                <h3 className="text-lg font-bold text-gray-900 line-clamp-2 group-hover:text-gray-700 transition-colors">
+                                    {category.categoryName}
+                                </h3>
+                                <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed">
+                                    {category.categoryDescription}
+                                </p>
+                                <div className="flex gap-2 pt-3 border-t border-gray-100">
+                                    <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg font-medium text-sm transition-colors duration-200">
+                                        <Pencil className="h-4 w-4" />
+                                        Edit
+                                    </button>
+                                    <button className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg font-medium text-sm transition-colors duration-200">
+                                        <Trash className="h-4 w-4" />
+                                        Delete
+                                    </button>
                                 </div>
                             </div>
                         </article>
@@ -140,8 +146,9 @@ export default function Categories() {
                         <input
                             id="name"
                             name="name"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            value={formData.categoryName}
+                            onChange={(e) => setFormData({ ...formData, categoryName: e.target.value })}
+                            required
                             placeholder="e.g. Bracelets"
                             className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
                         />
@@ -178,14 +185,15 @@ export default function Categories() {
                             <input
                                 type="file"
                                 accept="image/*"
+                                
                                 onChange={(e) => setImageFile(e.target.files?.[0] ?? null)}
                                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
                             />
                         ) : (
                             <input
                                 type="url"
-                                value={imageUrl}
-                                onChange={(e) => setImageUrl(e.target.value)}
+                                value={formData.categoryImageUrl}
+                                onChange={(e) => setFormData({ ...formData, categoryImageUrl: e.target.value })}
                                 placeholder="https://example.com/image.jpg"
                                 className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
                             />
@@ -199,8 +207,9 @@ export default function Categories() {
                         <textarea
                             id="description"
                             name="description"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
+                            value={formData.categoryDescription}
+                            required
+                            onChange={(e) => setFormData({ ...formData, categoryDescription: e.target.value })}
                             placeholder="Short description (optional)"
                             rows={3}
                             className="w-full resize-none rounded-md border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
@@ -209,16 +218,20 @@ export default function Categories() {
 
                     <button
                         type="submit"
-                        disabled={isSubmitting}
-                        className="inline-flex items-center justify-center rounded-md bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-900 disabled:opacity-70"
+                        disabled={isCreating}
+                        className="inline-flex items-center justify-center rounded-md bg-black px-4 py-2 text-sm font-semibold text-white hover:bg-gray-900 disabled:opacity-70 disabled:cursor-not-allowed"
                     >
-                        {isSubmitting ? "Saving..." : "Save Category"}
+                        {isCreating ? "Saving..." : "Save Category"}
                     </button>
                 </form>
             )}
 
             {message && (
-                <div className="text-sm text-gray-800 bg-gray-100 border border-gray-200 rounded-md px-3 py-2">
+                <div className={`text-sm border rounded-md px-3 py-2 ${
+                    message.includes("successfully") 
+                        ? "text-green-800 bg-green-50 border-green-200" 
+                        : "text-red-800 bg-red-50 border-red-200"
+                }`}>
                     {message}
                 </div>
             )}

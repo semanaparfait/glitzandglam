@@ -1,12 +1,20 @@
-import { products } from "../../components/Products";
+"use client";
+
+import { use } from "react";
 import ProductClient from "./ProductClient";
+import { useGetProductsQuery } from "@/servicesApi/Productslice";
 
-export default async function ProductPage({ params }) {
-  const { id } = await params;
+export default function ProductPage({ params }) {
+  const resolvedParams = use(params);
+  const { id } = resolvedParams ?? {};
+  const { data: productsData, isLoading, error } = useGetProductsQuery();
 
-  const product = products.find(p => p.id === Number(id));
+  if (isLoading) return <p>Loading product...</p>;
+  if (error) return <p>Failed to load product.</p>;
 
-  if (!product) return <p>Product not found</p>;
+  const product = productsData?.products?.find((item) => String(item.id) === String(id));
+
+  if (!product) return <p>Product not found.</p>;
 
   return <ProductClient product={product} />;
 }

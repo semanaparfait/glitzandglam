@@ -1,22 +1,39 @@
-import { createApi, fetchBaseQuery  } from "@reduxjs/toolkit/query";
+import {baseAPI} from '@/servicesApi/baseApi'
+import {Product} from '@/types/useTypes'
 
 
-export const  Apislice = createApi({
-    reducerPath: "api",
-    baseQuery: fetchBaseQuery({ baseUrl: process.env.NEXT_PUBLIC_BASE_URL }),
+
+export const productApi = baseAPI.injectEndpoints({
     endpoints: (builder) => ({
-        getProducts: builder.query({
-            query: () => "/products/products",
+        getProducts: builder.query<Product[], void>({
+            query: () => '/products/products',
+            // providesTags: ['Products'],
         }),
-        getproductById: builder.query({
-            query: (id: number) => `/products/product/${id}`,
-        }),
-        createProduct: builder.mutation({
-            query: (product) => ({
-                url: "/products/addproduct",
-                method: "POST",
+        createProduct: builder.mutation<Product, Partial<Product>>({
+            query: (product: Partial<Product>) => ({
+                url: '/products/addproduct',  
+                method: 'POST',
                 body: product,
             }),
+            // invalidatesTags: ['Products'],
+        }), 
+        deleteProduct: builder.mutation<{ success: boolean; id: string }, string>({
+            query: (id: string) => ({
+                url: `/product/deleteProduct/${id}`,
+                method: 'DELETE',
+            }),
+            // invalidatesTags: ['Products'],
         }),
-    }),
+        editProduct: builder.mutation<Product, Partial<Product> & { id: string }>({
+            query: ({ id, ...product }) => ({
+                url: `/product/editProduct/${id}`,
+                method: 'PUT',
+                body: product,
+            }),
+            // invalidatesTags: ['Products'],
+        }),
+    })
+
 })
+
+export const { useGetProductsQuery, useCreateProductMutation, useDeleteProductMutation, useEditProductMutation } = productApi;

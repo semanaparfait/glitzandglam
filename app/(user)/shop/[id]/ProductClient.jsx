@@ -1,10 +1,15 @@
 "use client"
 import { Calendar, Package, Truck, MapPin } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 export default function ProductClient({ product }) {
     const [count, setCount] = useState(1);
-    const images = Array.isArray(product.image) ? product.image.slice(0, 5) : [product.image];
+    const images = useMemo(() => {
+        if (Array.isArray(product?.productImageUrl) && product.productImageUrl.length > 0) {
+            return product.productImageUrl.slice(0, 5);
+        }
+        return ["/products/p1.jfif"];
+    }, [product]);
     const [activeIndex, setActiveIndex] = useState(0);
 
   return (
@@ -13,8 +18,8 @@ export default function ProductClient({ product }) {
                     <div className="w-full flex items-center justify-center">
                         <img
                             src={images[activeIndex]}
-                            alt={product.name}
-                            className="w-1/2 h-auto object-contain"
+                            alt={product.productName}
+                            className="w-[40%] h-auto object-contain rounded-2xl"
                         />
                     </div>
                     {images.length > 1 && (
@@ -26,7 +31,7 @@ export default function ProductClient({ product }) {
                                     className={`rounded-md p-0.5 border ${i === activeIndex ? "border-black" : "border-transparent"}`}
                                     aria-label={`View image ${i + 1}`}
                                 >
-                                    <img src={src} alt={`${product.name} ${i + 1}`} className="h-16 w-16 object-cover rounded" />
+                                    <img src={src} alt={`${product.productName} ${i + 1}`} className="h-16 w-16 object-cover rounded" />
                                 </button>
                             ))}
                         </div>
@@ -35,15 +40,17 @@ export default function ProductClient({ product }) {
 
         <div className="flex flex-col gap-2 items-start ">
 
-      <h1 className="font-semibold text-2xl">{product.name}</h1>
+            <h1 className="font-semibold text-2xl">{product.productName}</h1>
       <div>
 
-      <p className="font-medium text-gray-400 line-through">{product.price.toLocaleString()} RWF</p>
-      <p className="font-semibold text-2xl leading-tight">{product.price.toLocaleString()} RWF</p>
+            {product.productOldPrice && (
+                <p className="font-medium text-gray-400 line-through">{product.productOldPrice.toLocaleString()} RWF</p>
+            )}
+            <p className="font-semibold text-2xl leading-tight">{product.productNewPrice.toLocaleString()} RWF</p>
       </div>
-      <p className="max-w-md leading-relaxed ">Lorem ipsum dolor sit amet consectetur adipisicing elit. Unde animi iusto tempore adipisci et, quibusdam nobis soluta. Velit, enim ducimus fuga quod culpa, in dolorum laborum deleniti quasi accusantium tempora?</p>
-        <div className="flex items-center border rounded-full px-3 py-1 w-34 justify-between" style={{ padding: '5px 10px' }}>
-            <button  className="text-xl " onClick={() => setCount(prev => Math.max(1, prev - 1))}>−</button>
+            <p className="max-w-md leading-relaxed ">{product.productDescription}</p>
+        <div className="flex items-center border rounded-full px-3 py-1 w-34 justify-between" style={{ padding: "5px 10px" }}>
+            <button  className="text-xl " onClick={() => setCount(prev => Math.max(1, prev - 1))}>-</button>
             <span>{count}</span>
             <button  className="text-xl" onClick={() => setCount(prev => prev + 1)}>+</button>
         </div>
