@@ -11,6 +11,8 @@ export default function AdminSidebar() {
     { name: "Orders", href: "/owner/orders", icon: ShoppingCart },
     { name: "Users", href: "/owner/users", icon: Users },
     {name: "Categories", href: "/owner/categories", icon: Package },
+    {name: "Contact Us" , href: "/owner/contactus", icon: Users },
+    {name: "newsletter" ,  href :"/owner/newsletter", icon: Users },
     { name: "Analytics", href: "/owner/analytics", icon: BarChart3 },
     { name: "Settings", href: "/owner/settings", icon: Settings },
   ];
