@@ -1,11 +1,13 @@
 "use client"
 import { useState } from "react";
 import {toast} from "react-hot-toast";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Mail, Lock, User, Phone, Sparkles } from "lucide-react";
+import {useLoginMutation, useRegisterMutation} from '@/servicesApi/authSlice';
 
 export default  function Account() {
+    const [login, { isLoading: isLoggingIn }] = useLoginMutation();
+    const [register, { isLoading: isRegistering }] = useRegisterMutation();
     const [isLogin, setIsLogin] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -23,57 +25,69 @@ export default  function Account() {
         });
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (isLogin) {
-            // Handle login
-            console.log("Login:", { email: formData.email, password: formData.password });
-        } else {
+    const router = useRouter();
 
-            doSignup();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        if (isLogin) {
+            await doLogin();
+        } else {
+            await doSignup();
         }
     };
 
-    const router = useRouter();
-    const [loading, setLoading] = useState(false);
+    const doLogin = async () => {
+        try {
+            const result = await login({
+                email: formData.email,
+                password: formData.password,
+            }).unwrap();
+
+            toast.success('Login successful!');
+            
+            // Store token and user data
+            if (result.token) {
+                localStorage.setItem('token', result.token);
+            }
+            if (result.user) {
+                localStorage.setItem('user', JSON.stringify(result.user));
+            }
+
+            // Navigate to shop or home
+            router.push('/shop');
+        } catch (err) {
+            console.error('Login error:', err);
+            const errorMsg = err?.data?.error || err?.data?.message || 'Login failed';
+            toast.error(errorMsg);
+        }
+    };
 
     const doSignup = async () => {
-        setLoading(true);
         try {
-            // Map frontend field `fullName` to backend `fullname`
-            // Backend expects `phonenumber`, so map UI `phone` accordingly
-            const payload = {
+            const result = await register({
                 fullname: formData.fullName,
                 email: formData.email,
                 password: formData.password,
-                phonenumber: formData.phonenumber
-            };
+                phonenumber: formData.phonenumber,
+            }).unwrap();
 
-            // Update this URL if your backend runs on a different port
-            const BACKEND = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:4000';
-
-            const res = await axios.post(`${BACKEND}/auth/register`, payload, {
-                headers: { 'Content-Type': 'application/json' }
+            toast.success('Account created successfully! Please log in.');
+            
+            // Switch to login form and keep the email
+            setIsLogin(true);
+            setFormData({
+                email: formData.email,
+                password: '',
+                fullName: '',
+                phonenumber: ''
             });
-
-            if (res.status === 201) {
-                toast.success('Signup successful! Please log in.');
-                setIsLogin(true);
-                setFormData({ email: '', password: '', confirmPassword: '', fullName: '', phonenumber: '' });
-                // Optionally navigate to login or dashboard
-                router.refresh();
-            } else {
-
-                toast.error(res.data?.message || 'Unexpected response from server');
-            }
         } catch (err) {
-            console.error('Signup error', err?.response || err);
-            const msg = err?.response?.data?.message || 'Signup failed';
-            toast.error(msg);
-        } finally {
-            setLoading(false);
+            console.error('Signup error:', err);
+            const errorMsg = err?.data?.message || 'Signup failed';
+            toast.error(errorMsg);
         }
-    }
+    };
 
     return (
         <div className="min-h-screen  flex items-center justify-center p-4">
@@ -192,9 +206,12 @@ export default  function Account() {
                             {/* Submit Button */}
                             <button
                                 type="submit"
-                                className="w-full bg-[#907764] text-white py-3 rounded-xl font-semibold hover:from-amber-600 hover:to-amber-700 transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
+                                disabled={isLoggingIn || isRegistering}
+                                className="w-full bg-[#907764] text-white py-3 rounded-xl font-semibold hover:from-amber-600 hover:to-amber-700 transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                             >
-                                {isLogin ? "Sign In" : "Create Account"}
+                                {(isLogin && isLoggingIn) ? "Signing In..." : 
+                                 (!isLogin && isRegistering) ? "Creating Account..." :
+                                 isLogin ? "Sign In" : "Create Account"}
                             </button>
                         </form>
 

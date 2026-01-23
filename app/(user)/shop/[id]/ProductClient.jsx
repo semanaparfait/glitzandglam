@@ -1,8 +1,9 @@
 "use client"
 import { Calendar, Package, Truck, MapPin } from "lucide-react";
 import { useMemo, useState } from "react";
+import Link from "next/link";
 
-export default function ProductClient({ product }) {
+export default function ProductClient({ product, allProducts = [] }) {
     const [count, setCount] = useState(1);
     const images = useMemo(() => {
         if (Array.isArray(product?.productImageUrl) && product.productImageUrl.length > 0) {
@@ -12,7 +13,15 @@ export default function ProductClient({ product }) {
     }, [product]);
     const [activeIndex, setActiveIndex] = useState(0);
 
+    // Get products from the same category
+    const relatedProducts = useMemo(() => {
+        return allProducts.filter(
+            (p) => p.categoryId === product.categoryId && p.id !== product.id
+        ).slice(0, 4);
+    }, [product, allProducts]);
+
   return (
+    <>
     <div className="grid md:grid-cols-2 justify-center gap-3 py-10 px-5  ">
                 <div className="flex flex-col items-center justify-center rounded-xl">
                     <div className="w-full flex items-center justify-center">
@@ -101,5 +110,105 @@ export default function ProductClient({ product }) {
 
         </div>
     </div>
+
+    {/* Related Products Section */}
+    {relatedProducts.length > 0 && (
+        <div className="py-10 px-5">
+            <h2 className="text-2xl font-semibold mb-6">More From This Category</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {relatedProducts.map((relatedProduct) => (
+                    <div key={relatedProduct.id} className="group bg-white rounded-2xl shadow-md hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 hover:border-gray-300 flex flex-col">
+                        
+                        <Link href={`/shop/${relatedProduct.id}`} className="relative">
+                            <div className="relative bg-gradient-to-br from-pink-50 to-purple-50 aspect-square overflow-hidden">
+                                
+                                <img 
+                                    src={relatedProduct.productImageUrl instanceof Array ? relatedProduct.productImageUrl[0] : relatedProduct.productImageUrl} 
+                                    alt={relatedProduct.productName} 
+                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                />
+                                <div className="absolute top-3 left-3 flex flex-col gap-2">
+                                    {relatedProduct.productOldPrice && (
+                                        <span className="bg-red-500 hidden text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg animate-pulse">
+                                            SALE
+                                        </span>
+                                    )}
+                                    {relatedProduct.productInStock <= 10 && relatedProduct.productInStock > 0 && (
+                                        <span className="bg-[var(--hover-nav)] text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+                                            {relatedProduct.productInStock} LEFT
+                                        </span>
+                                    )}
+                                </div>
+                                {relatedProduct.productOldPrice && (
+                                    <div className="absolute top-3 right-3 bg-white rounded shadow-xl p-2">
+                                        <div className="flex items-center justify-center w-12">
+                                            <span className="text-xs font-bold text-red-600 leading-tight">
+                                                {Math.round(((relatedProduct.productOldPrice - relatedProduct.productNewPrice) / relatedProduct.productOldPrice) * 100)}%
+                                            </span>
+                                            <span className="text-[8px] text-gray-600">OFF</span>
+                                        </div>
+                                    </div>
+                                )}
+                                {relatedProduct.productInStock <= 0 && (
+                                    <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center">
+                                        <div className="bg-white text-gray-900 text-xs font-bold px-6 py-3 rounded-full uppercase tracking-widest shadow-2xl">
+                                            Out of Stock
+                                        </div>
+                                    </div>
+                                )}
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                            </div>
+                        </Link>
+
+                        {/* Product Info */}
+                        <div className="p-4 flex flex-col flex-grow">
+                            <Link href={`/shop/${relatedProduct.id}`}>
+                                <h3 className="text-base font-bold text-gray-900 line-clamp-2 group-hover:text-black transition-colors">
+                                    {relatedProduct.productName}
+                                </h3>
+                            </Link>
+                            
+                            {/* Pricing */}
+                            <div className="mb-4">
+                                <div className="flex items-baseline gap-2 flex-wrap">
+                                    <span className="text-2xl font-bold text-gray-900">
+                                        {relatedProduct.productNewPrice.toLocaleString()} 
+                                    </span>
+                                    <span className="text-sm text-gray-600">RWF</span>
+                                </div>
+                                {relatedProduct.productOldPrice && (
+                                    <div className="flex items-center gap-2 mt-1">
+                                        <span className="text-sm text-gray-400 line-through">
+                                            {relatedProduct.productOldPrice.toLocaleString()} RWF
+                                        </span>
+                                        <span className="text-xs text-green-600 font-semibold">
+                                            Save {(relatedProduct.productOldPrice - relatedProduct.productNewPrice).toLocaleString()} RWF
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="flex gap-2 mt-auto">
+                                <button 
+                                    disabled={relatedProduct.productInStock <= 0}
+                                    className="flex-1 py-2.5 px-3 border-2 border-gray-900 text-gray-900 rounded-xl font-semibold text-sm hover:bg-gray-900 hover:text-white transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-900"
+                                >
+                                    Add to cart
+                                </button>
+                                <button 
+                                    disabled={relatedProduct.productInStock <= 0}
+                                    className="flex-1 py-2.5 px-3 bg-gradient-to-r from-gray-900 to-black text-white rounded-xl font-semibold text-sm hover:shadow-lg hover:scale-105 transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+                                >
+                                    Buy Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )}
+    </>
   );
 }
